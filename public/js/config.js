@@ -2,16 +2,17 @@
 
 // Firebase 主控台 → 專案設定 → 一般 → 你的應用程式 → SDK 設定與配置
 export const firebaseConfig = {
-  apiKey: "AIzaSyCEdieJSV95zxYjUyS__JZ9UVIkrreuVj8",
-  authDomain: "hcrs-5b4f8.firebaseapp.com",
-  projectId: "hcrs-5b4f8",
-  storageBucket: "hcrs-5b4f8.firebasestorage.app",
-  messagingSenderId: "506120961513",
-  appId: "1:506120961513:web:c037b9994ebc527f551f78",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:0000000000000000",
 };
 
-// 只允許這個網域的 Google 帳號登入
-export const ALLOWED_DOMAIN = ["chc.edu.tw", "hres.chc.edu.tw"];
+// 只允許這些網域的 Google 帳號登入
+// ⚠ 若修改，firestore.rules 裡 signedIn() 的網域判斷也要一起改
+export const ALLOWED_DOMAINS = ["chc.edu.tw", "hres.chc.edu.tw"];
 
 // 第一位（固定）管理員，用來在系統剛建立時登入設定其他管理員與主管
 // ⚠ 必須和 firestore.rules 裡的 bootstrapAdmins() 一致
