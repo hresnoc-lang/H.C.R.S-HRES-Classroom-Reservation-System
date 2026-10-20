@@ -99,11 +99,12 @@ function openDay(ds) {
   const list = reservationsOn(ds, roomId);
   $("dayTitle").textContent = `${ds}（${WEEKDAY_LABEL[parseDate(ds).getDay()]}）借用情形`;
 
-  let html = `<table class="grid"><thead><tr><th>教室</th>${state.periods
-    .map((p) => `<th>${esc(p.name)}<small>${esc(p.start)}-${esc(p.end)}</small></th>`).join("")}</tr></thead><tbody>`;
-  for (const room of rooms) {
-    html += `<tr><th>${esc(room.name)}</th>`;
-    for (const p of state.periods) {
+  // 直列為節次、橫欄為教室
+  let html = `<table class="grid"><thead><tr><th>節次</th>${rooms
+    .map((room) => `<th>${esc(room.name)}</th>`).join("")}</tr></thead><tbody>`;
+  for (const p of state.periods) {
+    html += `<tr><th>${esc(p.name)}<small>${esc(p.start)}-${esc(p.end)}</small></th>`;
+    for (const room of rooms) {
       const r = list.find((x) => x.roomId === room.id && x.periodIds.includes(p.id));
       html += r
         ? `<td class="busy" style="--c:${roomColor(state.rooms, room.id)}" title="${esc(usageText(r))}">${esc(teacherOf(r))}<small>${esc(usageText(r))}</small></td>`
@@ -163,6 +164,22 @@ function updateTypeFields() {
   updatePreview();
 }
 document.querySelectorAll('input[name="type"]').forEach((el) => (el.onchange = updateTypeFields));
+
+// 節次快速選擇：上午＝12:00 前開始的節次，下午＝13:00 後開始的節次（午休只算在整天）
+const QUICK_PERIODS = {
+  all: () => true,
+  am: (p) => p.start < "12:00",
+  pm: (p) => p.start >= "13:00",
+  none: () => false,
+};
+document.querySelectorAll("[data-quick]").forEach((btn) => {
+  btn.onclick = () => {
+    const pick = QUICK_PERIODS[btn.dataset.quick];
+    const ids = new Set(state.periods.filter(pick).map((p) => p.id));
+    document.querySelectorAll('input[name="period"]').forEach((el) => (el.checked = ids.has(el.value)));
+    updatePreview();
+  };
+});
 
 const checkedValues = (name) => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((el) => el.value);
 
