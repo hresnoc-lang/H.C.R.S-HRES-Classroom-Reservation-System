@@ -5,6 +5,7 @@ import {
   occursOn, occurrences, findConflictDate, periodNames, describeSchedule, roomColor, teacherOf, usageText,
   sendMail, managerEmails, reservationMailHtml,
 } from "./common.js";
+import { startTour, offerTour } from "./tour.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -355,6 +356,44 @@ async function loadMine() {
   }));
 }
 
+// ===================== 操作導覽 =====================
+
+const showTab = (name) => document.querySelector(`#tabs button[data-tab="${name}"]`)?.click();
+
+// 給第一次使用的老師：5 步、每步一兩句話
+const TOUR_STEPS = [
+  {
+    target: "#userBox",
+    title: "1. 登入",
+    before: () => showTab("calendar"),
+    text: () => (state.user
+      ? "您已登入。請記得用 <b>Chrome 或 Safari</b> 開啟本網站。"
+      : "先用學校 Google 帳號登入。<br>請用 <b>Chrome 或 Safari</b> 開啟，LINE 裡面無法登入。"),
+  },
+  {
+    target: "#roomLegend",
+    title: "2. 看懂圓點",
+    text: "顏色＝教室，一排圓點＝晨光到第7節。<br><b>實心</b>＝已被借走。",
+  },
+  {
+    target: "#calendar",
+    title: "3. 點日期看詳細",
+    text: "點任一天，就能看到誰借了哪間、哪一節。",
+  },
+  {
+    target: '#tabs button[data-tab="apply"]',
+    title: "4. 申請借用",
+    text: "選教室、日期、節次，按送出即可。",
+  },
+  {
+    target: '#tabs button[data-tab="mine"]',
+    title: "5. 查看結果",
+    text: "主管同意後才算借到，結果在這裡看。<br>忘記怎麼用，按右上「操作說明」。",
+  },
+];
+
+$("helpBtn").onclick = () => startTour(TOUR_STEPS, { onEnd: () => showTab("calendar") });
+
 // ===================== 初始化 =====================
 
 setupTabs($("tabs"));
@@ -379,7 +418,8 @@ async function init() {
   renderLegend();
   buildApplyForm();
   updateTypeFields();
-  loadMonth();
+  await loadMonth();
+  offerTour(TOUR_STEPS, { onEnd: () => showTab("calendar") });
 }
 
 init().catch((e) => {
