@@ -18,6 +18,7 @@
   - 每月固定：選每月幾號 ＋ 節次 ＋ 起訖日期
 - **衝突檢查**：送出申請時若與已核准的借用衝突會直接擋下並顯示衝突日期；與其他待審核申請重疊會提醒。主管核准時也會再檢查一次。
 - **審核流程**：教師送出 → 寄信給所有主管 → 主管在後台同意／不同意 → 寄信通知申請人 → 核准後才顯示在公開月曆。
+- **審核方式**：管理員可在後台「待審核」最上方用開關切換「手動同意／自動同意」。自動同意時，老師送出即核准（仍會檢查時段衝突），並寄信通知主管。
 - 管理員／主管申請時可勾選「直接核准」，方便把 Excel 上原有的固定借用直接輸入。
 - 後台「所有借用」可依狀態、教室、月份篩選並 **匯出 CSV**（可用 Excel 開啟）。
 
@@ -54,10 +55,10 @@
 
 #### 方式 A：GitHub Pages（前端）＋ Firebase（資料）
 1. GitHub repo → **Settings → Pages → Build and deployment → Source** 選 **GitHub Actions**。
-2. 把程式合併到 `main` 分支，`.github/workflows/pages.yml` 會自動把 `public/` 部署上去
-   （也可到 Actions 分頁手動執行「Deploy to GitHub Pages」）。
-   網址為 `https://znxuyz.github.io/H.C.R.S-HRES-Classroom-Reservation-System/`。
-3. Firebase 主控台 → **Authentication → 設定 → 已授權網域** → 新增 `znxuyz.github.io`
+2. 同一頁按 **Static HTML** 的 **Configure**，把產生的設定檔中 `path: '.'` 改成 `path: 'public'`，
+   按 **Commit changes**。之後 `main` 分支有更新就會自動部署。
+   網址為 `https://<帳號>.github.io/H.C.R.S-HRES-Classroom-Reservation-System/`。
+3. Firebase 主控台 → **Authentication → 設定 → 已授權網域** → 新增 `<帳號>.github.io`
    （沒加的話 Google 登入會出現 `auth/unauthorized-domain` 錯誤）。
 4. Firestore 規則與索引仍要設定到 Firebase，兩種做法擇一：
    - 主控台：Firestore → **規則**，貼上 `firestore.rules` 內容後發布；
